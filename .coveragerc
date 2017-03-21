@@ -1,0 +1,5 @@
+[run]
+source = leonardo_3d_viewer
+omit =
+    *migrations*
+    leonardo_3d_viewer/__init__.py

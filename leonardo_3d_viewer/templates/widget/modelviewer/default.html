@@ -1,0 +1,97 @@
+{% extends widget.get_base_template %}
+
+{% block content %}
+
+<div id="{{ widget.fe_identifier }}-model" class="widget-model-viewer"></div>
+<script src="{{ STATIC_URL }}js/three.min.js"></script>
+<script src="{{ STATIC_URL }}js/STLLoader.js"></script>
+
+<script type="text/javascript">
+$(function() {
+
+    var container, camera, scene, renderer;
+
+    function play(){
+        init();
+        animate();
+    }
+
+    function init(){
+        container=document.getElementById("{{ widget.fe_identifier }}-model");
+        var box = $("#{{ widget.fe_identifier }}-model").parents(".leonardo-widget");
+
+        camera=new THREE.PerspectiveCamera(35, box.width() / box.height(), 1, 10000);
+        camera.position.set({{ widget.camera_position }});
+
+        scene=new THREE.Scene();
+
+        // object
+        var loader=new THREE.STLLoader();
+
+        // STL file to be loaded
+        loader.load('{{ widget.file.url }}', function( geometry ) {
+            var material=new THREE.MeshLambertMaterial({ ambient: {{ widget.model_ambient }},
+                                                         color: {{ widget.color }} });
+            geometry.center();
+            var mesh=new THREE.Mesh(geometry, material);
+            mesh.position.set( {{ widget.position }} );
+            mesh.rotation.set( {{ widget.rotation }} );
+
+            mesh.scale.set({{ widget.get_scale }}, {{ widget.get_scale }}, {{ widget.get_scale }} );
+
+            {% if widget.shadows %}
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            {% endif %}
+
+            scene.add(mesh);
+        });
+
+        // lights
+        scene.add(new THREE.AmbientLight({{ widget.ambient_light }}));
+
+        var directionalLight=new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position=camera.position;
+        scene.add(directionalLight);
+
+        // renderer
+
+        renderer=new THREE.WebGLRenderer({ antialias: {{ widget.antialias|yesno:"true,false" }} });
+
+        renderer.setSize(box.width(), box.height());
+
+        container.appendChild(renderer.domElement);
+
+        window.addEventListener('resize', onWindowResize, false);}
+
+    function addLight(x, y, z, color, intensity){
+        var directionalLight=new THREE.DirectionalLight(color, intensity);
+        directionalLight.position.set(x, y, z)
+        scene.add(directionalLight);}
+
+    function onWindowResize(){
+        var box = $("#{{ widget.fe_identifier }}-model").parents(".leonardo-widget");
+        camera.aspect=box.width() / box.height();
+        camera.updateProjectionMatrix();
+        renderer.setSize(box.width(), box.height());}
+
+    function animate(){
+        requestAnimationFrame(animate);
+        render();}
+
+    function render(){
+        var timer=Date.now() * {{ widget.speed }};
+        r=150;
+        camera.position.x=r*Math.cos(timer);
+        camera.position.z=r*Math.sin(timer);
+        camera.lookAt(scene.position);
+        renderer.render(scene, camera);
+        renderer.setClearColor({{ widget.background_color }}, 1);
+    }
+    /*  loadResource({src:"{{ STATIC_URL }}js/STLLoader.js", async: false});
+        loadResource({src:"{{ STATIC_URL }}js/three.min.js", callback: play, async: false});
+    */
+    play();
+});
+</script>
+{% endblock %}

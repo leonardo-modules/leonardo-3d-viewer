@@ -1,0 +1,5 @@
+include MANIFEST.in
+include README.rst
+recursive-include leonardo_3d_viewer/static *
+recursive-include leonardo_3d_viewer/locale *
+recursive-include leonardo_3d_viewer/templates *
