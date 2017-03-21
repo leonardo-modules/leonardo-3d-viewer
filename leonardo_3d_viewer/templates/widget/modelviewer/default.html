@@ -37,7 +37,7 @@ $(function() {
             mesh.position.set( {{ widget.position }} );
             mesh.rotation.set( {{ widget.rotation }} );
 
-            mesh.scale.set({{ widget.get_scale|floatformat:10 }}, {{ widget.get_scale|floatformat:10 }}, {{ widget.get_scale|floatformat:10 }} );
+            mesh.scale.set({{ widget.get_scale|stringformat:"f" }}, {{ widget.get_scale|stringformat:"f" }}, {{ widget.get_scale|stringformat:"f" }} );
 
             {% if widget.shadows %}
             mesh.castShadow = true;
@@ -80,7 +80,7 @@ $(function() {
         render();}
 
     function render(){
-        var timer=Date.now() * {{ widget.speed|floatformat:10 }};
+        var timer=Date.now() * {{ widget.speed|stringformat:"f" }};
         r=150;
         camera.position.x=r*Math.cos(timer);
         camera.position.z=r*Math.sin(timer);
