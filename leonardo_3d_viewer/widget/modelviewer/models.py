@@ -24,7 +24,8 @@ class ModelViewerWidget(Widget):
     image = models.ForeignKey("media.File", verbose_name=_(
         "Image"),
         help_text="fallback for browsers which does not support webgl",
-        related_name="%(app_label)s_%(class)s_image_related")
+        related_name="%(app_label)s_%(class)s_image_related",
+        blank=True, null=True)
 
     shadows = models.BooleanField(verbose_name=_('Shadows?'), default=True)
     antialias = models.BooleanField(verbose_name=_('Antialias?'), default=True)
